@@ -1,0 +1,19 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="input_horizontal_margin">32dp</dimen>
+
+    <dimen name="action_bar_height">52dp</dimen>
+    <dimen name="btn_logout_width">76dp</dimen>
+    <dimen name="btn_logout_height">38dp</dimen>
+    <dimen name="btn_logout_top">-16dp</dimen>
+    <dimen name="btn_number_width">80dp</dimen>
+    <dimen name="btn_number_height">80dp</dimen>
+    <dimen name="btn_otk_width">280dp</dimen>
+    <dimen name="btn_otk_height">56dp</dimen>
+    <dimen name="btn_otk_bottom">10dp</dimen>
+    <dimen name="body_margin_width">20dp</dimen>
+    <dimen name="body_margin_height">20dp</dimen>
+
+</resources>

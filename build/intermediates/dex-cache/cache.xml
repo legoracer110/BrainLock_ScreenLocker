@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\155672124f0df6acd5090c7d6a8c0b217edbea04\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="aee64634871d88a419d59eb743c1258a60f19700">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_0b0e6a70cfeeff3745035138382467a1d1504cdf.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_1d044c13f6529ef3222b807ae5899d818e6b3136\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\ef26c5600d876a8c7475e36af6738a1dd0073b1c\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_cb066cdea4b6019c7acd6c4dbbdb044a2c5530da.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\4fe727312ea7c77f031dac4e32344d52742ed253\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="2a53c4f3518116b8c6aee0e477233f0f7da8616f">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_9a00d28d7ae342f89f3d6ff2f6eebf65f883503c.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="9b93436060d870df4f138609fdae52b25bd42711">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_9a7f9d611162bb37487501ea6e44e16470e3f767\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\91411cd158fe7e30386ceb7812621ab2f42388f7\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ca3c7aa31e2726a400a6e552b93cb9f63c9a1e6d">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_3513e299a8d8b6b0b7acb5469e0e599fe0a5142e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\93212aff8fbfa691f8e5dac483c0f50b3edf0478\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e79aa3d9a16f8c9f16377c0608de70a8f31e5d80">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_dca0e6e0a3700619bca906b46d8ac35def54f698.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\335f580107f66b43249eb432378ae5e05252015c\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1630658fbc2d222b988603c27b4a4249586fbfe7">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_0f744eb89e0fd483f073092306059ef1bb78c2b7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\AppData\Local\Android\Sdk\extras\android\m2repository\com\android\support\support-annotations\25.1.0\support-annotations-25.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="64cb6b229a8bdfd907bc8dd46839a0053e4c018d">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\support-annotations-25.1.0_365b0c73fdea6ed7d5f53e91a4c7b8721bd1b266.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\ed2947e47d496bf7d5e183f059f90f1174de3024\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f02263e35e52668dd17b73bf961437e3d562b35f">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_bef6467f139a7ecddba2b0c60868d87cc56181f3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\abdc442a78486a1f2fa1a6bf21ddd5f6cc269db7\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="0a0ef86b7fa568a52bf6214a0326ca1f1d618da7">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_af5e69ec70b1f33bea399010843091d503f15884.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\0ec035edd8cf003e5ae99decd95327e41e81ed67\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6fb6ac3e8d3b9013819920d9ea11f3803c4c0033">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_7d65379a1eba236e796261c6043e0578640867b1.jar" />
+    </item>
+
+</items>
