@@ -3,12 +3,14 @@ package com.otk.fts.myotk;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,12 +44,20 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     private Button mBtnReset;
     private Button mBtnDel;
 
+    private Button txtInput1;
+    private Button txtInput2;
+
+    // PassWord Size
+    private int pwSize;
+
     // PassWord List
     private ArrayList pw;
     // 입력 번호 List
     public ArrayList<Integer> input;
     // 키패드 순서 List
     private ArrayList<Integer> pos;
+
+    boolean isStart = false;
 
     Vibrator vibrator;
 
@@ -100,15 +110,24 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         mBtnShow = (Button) findViewById(R.id.btn_show);
         mBtnShow.setOnTouchListener(this);
 
+        txtInput1 = (Button)findViewById(R.id.input1);
+        txtInput2 = (Button)findViewById(R.id.input2);
+
         mBtnReset = (Button) findViewById((R.id.btn_reset));
         mBtnReset.setOnClickListener(this);
         mBtnDel = (Button) findViewById((R.id.btn_del));
         mBtnDel.setOnClickListener(this);
 
-        // 비밀번호 배열 ( 임시비번 = 1233 )
+        //저장된 값을 불러오기 위해 같은 네임파일을 찾음.
+        SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
+        //sizePW라는 key에 저장된 값이 있는지 확인. 아무값도 들어있지 않으면 ""를 반환
+        Integer spw = sf.getInt("sizePW",2);
+        pwSize = spw;
+
+        // 비밀번호 배열 ( 임시비번 = 12 )
         pw = new ArrayList();
-        pw.add(1);
-        pw.add(2);
+        pw.add(0);
+        pw.add(9);
 
         // 입력받을 배열 생성
         input = new ArrayList<Integer>();
@@ -128,16 +147,24 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         pos.add(10);
         pos.add(11);
 
+
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
         shuffleKeyPad(pos);
         btnShow();
 
+        Log.d("Activity", "LockScreenActivity On!");
+        Log.d("Activity", ""+pwSize);
+        isStart = false;
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run(){
                 btnUnshow();
             }
-        }, 2000);    //3초 뒤에
-
+        }, 2000);    //2초 뒤에
     }
 
     @Override
@@ -174,8 +201,8 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         Log.d("FinTech", "reset_btn clicked");
         switch (v.getId()) {
             case R.id.btn_reset:
-                shuffleKeyPad(pos);
-                Toast.makeText(getApplicationContext(), "키패드 리셋", Toast.LENGTH_SHORT).show();
+                //shuffleKeyPad(pos);
+                //Toast.makeText(getApplicationContext(), "키패드 리셋", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.btn_del:
                 if(input.size()!=0) {
@@ -250,20 +277,48 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     void CheckPW() {
         if(input.size()==pw.size()){
             int index = 0;
+
             while(index<input.size()){
                 if(input.get(index)!=pw.get(index)) {
                     vibrator.vibrate(100);
-                    Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT).show();
-                    input.clear();
-                    enterInput();
+                    Toast toast = Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                    //Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT).show();
+                    toast.show();
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run(){
+                            Incorrect();
+                            input.clear();
+                            enterInput();
+                        }
+                    }, 200);    //0.2초 뒤에
                     return;
                 }
                 index++;
             }
-            Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT).show();
-            finish();
+            new Handler().postDelayed(new Runnable(){
+                @Override
+                public void run(){
+                    Unlock();
+                }
+            }, 200);    //0.2초 뒤에
         }
 
+    }
+
+    void Unlock(){
+        Toast toast = Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+        //Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT).show();
+        toast.show();
+        finish();
+    }
+
+    void Incorrect(){
+        txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        shuffleKeyPad(pos);
     }
 
     void enterInput() {
@@ -275,9 +330,17 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
             index++;
         }
         */
-
         Log.d("Input", "Input : " + input);
-
+        if(input.size()==1) {
+            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        } else if(input.size()==2) {
+            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+        }else{
+            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        }
         if(input.size()==pw.size())
             CheckPW();
     }
@@ -285,31 +348,31 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     public Drawable getDrawableImage(int number) {
         //Log.d("FinTech", "getDrawableImage number : " + number);
         if (number==0) {
-            return getResources().getDrawable(R.drawable.nexus5_10);
+            return getResources().getDrawable(R.drawable.blue_0);
         } else if (number==1) {
-            return getResources().getDrawable(R.drawable.nexus5_01);
+            return getResources().getDrawable(R.drawable.blue_1);
         } else if (number==2) {
-            return getResources().getDrawable(R.drawable.nexus5_02);
+            return getResources().getDrawable(R.drawable.blue_2);
         } else if (number==3) {
-            return getResources().getDrawable(R.drawable.nexus5_03);
+            return getResources().getDrawable(R.drawable.blue_3);
         } else if (number==4) {
-            return getResources().getDrawable(R.drawable.nexus5_04);
+            return getResources().getDrawable(R.drawable.blue_4);
         } else if (number==5) {
-            return getResources().getDrawable(R.drawable.nexus5_05);
+            return getResources().getDrawable(R.drawable.blue_5);
         } else if (number==6) {
-            return getResources().getDrawable(R.drawable.nexus5_06);
+            return getResources().getDrawable(R.drawable.blue_6);
         } else if (number==7) {
-            return getResources().getDrawable(R.drawable.nexus5_07);
+            return getResources().getDrawable(R.drawable.blue_7);
         } else if (number==8) {
-            return getResources().getDrawable(R.drawable.nexus5_08);
+            return getResources().getDrawable(R.drawable.blue_8);
         } else if (number==9) {
-            return getResources().getDrawable(R.drawable.nexus5_09);
+            return getResources().getDrawable(R.drawable.blue_9);
         } else if (number==10) {
-            return getResources().getDrawable(R.drawable.nexus5_11);
+            return getResources().getDrawable(R.drawable.blue_shap);
         } else if (number==11) {
-            return getResources().getDrawable(R.drawable.nexus5_12);
+            return getResources().getDrawable(R.drawable.asterisk);
         } else if (number==12) {
-            return getResources().getDrawable(R.drawable.btn_circle_icon);
+            return getResources().getDrawable(R.drawable.btn_new_btn);
         }
         return null;
     }
@@ -334,7 +397,13 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     public boolean onTouch(View v, MotionEvent motionEvent) {
         switch(motionEvent.getAction()){
             case MotionEvent.ACTION_DOWN :
-                Log.d("FinTech", "show_btn clicked");
+                shuffleKeyPad(pos);
+                /*
+                if(!isStart){
+                    shuffleKeyPad(pos);
+                    isStart = true;
+                }
+                */
                 btnShow();
                 break;
             case MotionEvent.ACTION_MOVE:

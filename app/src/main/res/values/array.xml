@@ -3,7 +3,6 @@
     <string-array name="numberOfpw">
         <item>2자리</item>
         <item>4자리</item>
-        <item>6자리</item>
     </string-array>
 
     <string-array name="numberOfpw_values">
