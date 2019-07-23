@@ -44,8 +44,10 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     private Button mBtnReset;
     private Button mBtnDel;
 
+    private Button txtInput0;
     private Button txtInput1;
     private Button txtInput2;
+    private Button txtInput3;
 
     // PassWord Size
     private int pwSize;
@@ -57,6 +59,9 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     // 키패드 순서 List
     private ArrayList<Integer> pos;
 
+    // 초기 비밀번호 보이는 시간
+    private Integer f_timer;
+
     boolean isStart = false;
 
     Vibrator vibrator;
@@ -65,7 +70,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("Activity", "Activity2 run!");
+        //Log.d("Activity", "Activity2 run!");
 
         // 진동
         vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
@@ -110,8 +115,10 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         mBtnShow = (Button) findViewById(R.id.btn_show);
         mBtnShow.setOnTouchListener(this);
 
+        txtInput0 = (Button) findViewById(R.id.input0);
         txtInput1 = (Button)findViewById(R.id.input1);
         txtInput2 = (Button)findViewById(R.id.input2);
+        txtInput3 = (Button)findViewById(R.id.input3);
 
         mBtnReset = (Button) findViewById((R.id.btn_reset));
         mBtnReset.setOnClickListener(this);
@@ -121,13 +128,46 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         //저장된 값을 불러오기 위해 같은 네임파일을 찾음.
         SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
         //sizePW라는 key에 저장된 값이 있는지 확인. 아무값도 들어있지 않으면 ""를 반환
-        Integer spw = sf.getInt("sizePW",2);
+        Integer spw = sf.getInt("pwSize",2);
         pwSize = spw;
+        Integer lpw = sf.getInt("pwList", 0);
+
+        f_timer = sf.getInt("pwTimer", 2000);
 
         // 비밀번호 배열 ( 임시비번 = 12 )
         pw = new ArrayList();
-        pw.add(0);
-        pw.add(9);
+        if(lpw==0) {
+            pw.add(0);
+            pw.add(0);
+            txtInput0.setVisibility(View.INVISIBLE);
+            txtInput3.setVisibility(View.INVISIBLE);
+        }else{
+            if(pwSize==2){
+                // 비밀번호 사이즈 2
+                Integer a = lpw/10;
+                Integer b = lpw%10;
+                pw.add(a);
+                pw.add(b);
+                txtInput0.setVisibility(View.INVISIBLE);
+                txtInput3.setVisibility(View.INVISIBLE);
+            }else{
+                // 비밀번호 사이즈 4
+                Integer a = lpw/1000;
+                Integer b = (lpw%1000)/100;
+                Integer c = (lpw%100)/10;
+                Integer d = lpw%10;
+                pw.add(a);
+                pw.add(b);
+                pw.add(c);
+                pw.add(d);
+                txtInput0.setVisibility(View.VISIBLE);
+                txtInput3.setVisibility(View.VISIBLE);
+            }
+        }
+
+        //Log.d("Activity", "passWord: "+lpw);
+        //pw.add(0);
+        //pw.add(9);
 
         // 입력받을 배열 생성
         input = new ArrayList<Integer>();
@@ -156,15 +196,16 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         shuffleKeyPad(pos);
         btnShow();
 
-        Log.d("Activity", "LockScreenActivity On!");
-        Log.d("Activity", ""+pwSize);
+        //Log.d("Activity", "LockScreenActivity On!");
+        //Log.d("Activity", ""+pwSize);
+        Log.d("Activity", ""+f_timer);
         isStart = false;
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run(){
                 btnUnshow();
             }
-        }, 2000);    //2초 뒤에
+        }, f_timer);    //2초 뒤에
     }
 
     @Override
@@ -198,7 +239,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        Log.d("FinTech", "reset_btn clicked");
+        //Log.d("FinTech", "reset_btn clicked");
         switch (v.getId()) {
             case R.id.btn_reset:
                 //shuffleKeyPad(pos);
@@ -282,6 +323,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
                 if(input.get(index)!=pw.get(index)) {
                     vibrator.vibrate(100);
                     Toast toast = Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT);
+                    //Log.d("Activity", "index : "+index + " / input:" + input.get(index)+" / pw:" + pw.get(index));
                     toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
                     //Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT).show();
                     toast.show();
@@ -316,8 +358,10 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     }
 
     void Incorrect(){
+        txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
         txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
         txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
         shuffleKeyPad(pos);
     }
 
@@ -330,17 +374,53 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
             index++;
         }
         */
-        Log.d("Input", "Input : " + input);
-        if(input.size()==1) {
-            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
-            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
-        } else if(input.size()==2) {
-            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
-            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
-        }else{
-            txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
-            txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+        //Log.d("Input", "Input : " + input);
+        if(pwSize==2) {
+            if (input.size() == 1) {
+                txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+            } else if (input.size() == 2) {
+                txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+            } else {
+                txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+            }
+        }else {
+            switch (input.size()) {
+                case 0:
+                    txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    break;
+                case 1:
+                    txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    break;
+                case 2:
+                    txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    break;
+                case 3:
+                    txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_before));
+                    break;
+                case 4:
+                    txtInput0.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput1.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput2.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    txtInput3.setBackground(getResources().getDrawable(R.drawable.input_circle_after));
+                    break;
+            }
         }
+
         if(input.size()==pw.size())
             CheckPW();
     }

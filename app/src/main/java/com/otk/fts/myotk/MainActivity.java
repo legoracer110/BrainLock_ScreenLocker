@@ -53,18 +53,27 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_setting2);
 
         SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
-        Boolean isRun = sf.getBoolean("first", false);
+        Boolean isRun = sf.getBoolean("firstBoot", false);
 
         if(!isRun) {
+            Log.d("Activity", "First Boot!");
+            //SharedPreferences를 sFile이름, 기본모드로 설정
+            SharedPreferences sharedPreferences = getSharedPreferences("sFile",MODE_PRIVATE);
+            //저장을 하기위해 editor를 이용하여 값을 저장시켜준다.
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("firstBoot",true); // key, value를 이용하여 저장하는 형태
+            editor.commit();
+
             Intent intent = new Intent(
                     getApplicationContext(),//현재제어권자
                     LockScreenService.class); // 이동할 컴포넌트
             startService(intent);
         }else{
+            Log.d("Activity", "Not First Boot!");
             Intent intent = new Intent(
                     getApplicationContext(),//현재제어권자
                     SettingsActivity.class); // 이동할 컴포넌트
-            startService(intent);
+            startActivity(intent);
         }
     }
 

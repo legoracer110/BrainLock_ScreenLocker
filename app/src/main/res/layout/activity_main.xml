@@ -31,6 +31,14 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/input0"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginRight="38.8dp"
+            android:background="@drawable/input_circle_before"
+            android:gravity="center" />
+
+        <Button
             android:id="@+id/input1"
             android:layout_width="15dp"
             android:layout_height="15dp"
@@ -43,6 +51,14 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_marginLeft="19.4dp"
+            android:background="@drawable/input_circle_before"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/input3"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="38.8dp"
             android:background="@drawable/input_circle_before"
             android:gravity="center" />
     </LinearLayout>
