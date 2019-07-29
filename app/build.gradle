@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        //vectorDrawables.useSupportLibrary = true
+        vectorDrawables.useSupportLibrary = true
         lintOptions {
             checkReleaseBuilds false
             // Or, if you prefer, you can continue to check for errors in release builds,
@@ -37,4 +37,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
+    compile 'gun0912.ted:tedpermission:2.0.0'
+    compile 'com.soundcloud.android:android-crop:1.0.1@aar'
 }

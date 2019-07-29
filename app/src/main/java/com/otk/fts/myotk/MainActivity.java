@@ -50,7 +50,6 @@ public class MainActivity extends Activity{
                         | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
         //setContentView(R.layout.activity_main);
-        setContentView(R.layout.activity_setting2);
 
         SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
         Boolean isRun = sf.getBoolean("firstBoot", false);
@@ -68,7 +67,10 @@ public class MainActivity extends Activity{
                     getApplicationContext(),//현재제어권자
                     LockScreenService.class); // 이동할 컴포넌트
             startService(intent);
+
+            System.exit(0);
         }else{
+            //setContentView(R.layout.activity_setting2);
             Log.d("Activity", "Not First Boot!");
             Intent intent = new Intent(
                     getApplicationContext(),//현재제어권자

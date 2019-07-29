@@ -100,94 +100,82 @@
                 android:id="@+id/button1"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginLeft="5dp" />
 
             <Button
                 android:id="@+id/button2"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
-                android:layout_marginLeft="19.4dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginLeft="19.4dp" />
 
             <Button
                 android:id="@+id/button3"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
-                android:layout_marginLeft="19.4dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginLeft="19.4dp" />
 
             <Button
                 android:id="@+id/button4"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button5"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button6"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button7"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button8"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button9"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button10"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button11"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/button12"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_marginLeft="19.4dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/button_otk_null" />
+                android:layout_marginTop="8dp" />
 
             <Button
                 android:id="@+id/btn_show"

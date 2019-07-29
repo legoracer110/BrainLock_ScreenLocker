@@ -1,14 +1,22 @@
 package com.otk.fts.myotk;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.os.Vibrator;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -354,7 +362,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
         //Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT).show();
         toast.show();
-        finish();
+        finishAffinity();
     }
 
     void Incorrect(){
@@ -450,7 +458,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         } else if (number==10) {
             return getResources().getDrawable(R.drawable.blue_shap);
         } else if (number==11) {
-            return getResources().getDrawable(R.drawable.asterisk);
+            return getResources().getDrawable(R.drawable.blue_star);
         } else if (number==12) {
             return getResources().getDrawable(R.drawable.btn_new_btn);
         }
@@ -521,6 +529,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         mBtnButton12.setBackground(getDrawableImage(pos.get(11)));
         mBtnButton12.setEnabled(false);
     }
+
     void btnUnshow(){
         mBtnButton1.setBackground(getDrawableImage(12));
         mBtnButton1.setEnabled(true);
@@ -547,4 +556,6 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         mBtnButton12.setBackground(getDrawableImage(12));
         mBtnButton12.setEnabled(true);
     }
+
+
 }

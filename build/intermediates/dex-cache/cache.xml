@@ -3,6 +3,15 @@
 
     <item
         is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\aa86460053d68c6a4afd0334b9595d5a72f2a7f5\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1eb333af088ce95853394fc07cb8f191e4f1f894">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_4f2cef76f86eb11a4f8eee26301ca56cd0b88c68.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="C:\Users\legor\.android\build-cache\155672124f0df6acd5090c7d6a8c0b217edbea04\output\jars\classes.jar"
         jumboMode="false"
         optimize="true"
@@ -43,8 +52,17 @@
         jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="98b5396041e59b16761f524b4b363dec2359999d">
+        sha1="7271ee490cf81479fdfad13a675bb1e63a627052">
         <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_9a7f9d611162bb37487501ea6e44e16470e3f767\classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\legor\.android\build-cache\06e0b91c7e9fdc76a48c7fa3011df6141e9ee1a8\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="11a65cf2b30c192b38a881d626fa771a78a2293d">
+        <dex dex="D:\Works\TechWorks\APP\my_otk_mobile-master\app\build\intermediates\pre-dexed\debug\classes_f899649977d19f19a88bcbea689fbf885006391c.jar" />
     </item>
     <item
         is-multidex="false"
