@@ -8,6 +8,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +42,8 @@ import java.util.Random;
 
 public class LockScreenActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
 
+    private boolean isActive;
+
     private Context mContext;
     private Button mBtnButton1;
     private Button mBtnButton2;
@@ -56,6 +67,13 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     private Button txtInput1;
     private Button txtInput2;
     private Button txtInput3;
+
+    // Custom 버튼 이미지 여부
+    private boolean customBtnImg;
+    // Custom 버튼 이미지 경로
+    private String customBtnImgPath;
+    // Custom 버튼 Drawable
+    private Drawable custom_btn_drawable;
 
     // PassWord Size
     private int pwSize;
@@ -135,12 +153,29 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
         //저장된 값을 불러오기 위해 같은 네임파일을 찾음.
         SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
+
+        isActive = sf.getBoolean("isLock", true);
+
         //sizePW라는 key에 저장된 값이 있는지 확인. 아무값도 들어있지 않으면 ""를 반환
         Integer spw = sf.getInt("pwSize",2);
         pwSize = spw;
         Integer lpw = sf.getInt("pwList", 0);
 
         f_timer = sf.getInt("pwTimer", 2000);
+
+        customBtnImg = sf.getBoolean("customBtnImg", false);
+        customBtnImgPath = sf.getString("pwImgPath","");
+
+        if(customBtnImg){
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            Bitmap originalBm = BitmapFactory.decodeFile(customBtnImgPath, options);
+
+            //originalBm = setRoundCorner(originalBm, 3);
+
+            RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(originalBm);
+
+            custom_btn_drawable = tempRoundD;
+        }
 
         // 비밀번호 배열 ( 임시비번 = 12 )
         pw = new ArrayList();
@@ -200,20 +235,25 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
     @Override
     public void onStart(){
-        super.onStart();
-        shuffleKeyPad(pos);
-        btnShow();
+        if(isActive){
+            super.onStart();
+            shuffleKeyPad(pos);
+            btnShow();
 
-        //Log.d("Activity", "LockScreenActivity On!");
-        //Log.d("Activity", ""+pwSize);
-        Log.d("Activity", ""+f_timer);
-        isStart = false;
-        new Handler().postDelayed(new Runnable(){
-            @Override
-            public void run(){
-                btnUnshow();
-            }
-        }, f_timer);    //2초 뒤에
+            //Log.d("Activity", "LockScreenActivity On!");
+            //Log.d("Activity", ""+pwSize);
+            Log.d("Activity", "" + f_timer);
+            isStart = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    btnUnshow();
+                }
+            }, f_timer);    //2초 뒤에
+        }else {
+            finishAffinity();
+        }
+
     }
 
     @Override
@@ -460,7 +500,12 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         } else if (number==11) {
             return getResources().getDrawable(R.drawable.blue_star);
         } else if (number==12) {
-            return getResources().getDrawable(R.drawable.btn_new_btn);
+
+            if(customBtnImg){
+                return (Drawable)custom_btn_drawable;
+            }else {
+                return getResources().getDrawable(R.drawable.btn_new_btn);
+            }
         }
         return null;
     }
@@ -557,5 +602,25 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         mBtnButton12.setEnabled(true);
     }
 
+    public static Bitmap setRoundCorner(Bitmap bitmap, int pixel) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        int color = 0xff424242;
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        paint.setColor(color);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawRoundRect(rectF, pixel, pixel, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
+    }
 
 }

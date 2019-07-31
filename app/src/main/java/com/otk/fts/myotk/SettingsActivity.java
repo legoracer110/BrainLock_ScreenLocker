@@ -6,8 +6,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
@@ -27,8 +34,10 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.soundcloud.android.crop.Crop;
@@ -42,18 +51,23 @@ import java.util.ArrayList;
 
 public class SettingsActivity extends Activity{
 
+    private boolean powerOn;
+
+    private CheckBox useLock;
+    private CheckBox dontUse;
+
     private CheckBox spw1;
     private CheckBox spw2;
     private EditText input;
     private EditText recheck;
 
+    private CheckBox timer0;
     private CheckBox timer1;
     private CheckBox timer2;
     private CheckBox timer3;
 
     private CheckBox btn_img1;
     private CheckBox btn_img2;
-    private CheckBox btn_img3;
 
     private Button confirm;
     private Button cancel;
@@ -67,6 +81,7 @@ public class SettingsActivity extends Activity{
     private File tempFile;
     private String mCurrentPhotoPath;
 
+    private boolean customBtnImg;
     private String tempFilePath;
 
     private Bitmap thePic;
@@ -100,6 +115,26 @@ public class SettingsActivity extends Activity{
                 .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .check();
 
+        powerOn = true;
+
+        useLock = (CheckBox)findViewById(R.id.check_use);
+        useLock.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO : process the click event.
+                dontUse.setChecked(false);
+                powerOn = true;
+            }
+        }) ;
+        dontUse = (CheckBox)findViewById(R.id.check_dont);
+        dontUse.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO : process the click event.
+                useLock.setChecked(false);
+                powerOn = false;
+            }
+        }) ;
 
         spw1 = (CheckBox)findViewById(R.id.pwSize2);
         spw2 = (CheckBox)findViewById(R.id.pwSize4);
@@ -112,8 +147,8 @@ public class SettingsActivity extends Activity{
                 pwSize = 2;
                 spw1.setChecked(true);
                 spw2.setChecked(false);
-                input.setHint("**");
-                recheck.setHint("**");
+                input.setHint("2자리 입력");
+                recheck.setHint("2자리 입력");
             }
         }) ;
         spw2.setOnClickListener(new CheckBox.OnClickListener() {
@@ -123,8 +158,8 @@ public class SettingsActivity extends Activity{
                 pwSize = 4;
                 spw2.setChecked(true);
                 spw1.setChecked(false);
-                input.setHint("****");
-                recheck.setHint("****");
+                input.setHint("4자리 입력");
+                recheck.setHint("4자리 입력");
 
             }
         }) ;
@@ -132,11 +167,24 @@ public class SettingsActivity extends Activity{
         input = (EditText)findViewById(R.id.input_pw);
         recheck = (EditText)findViewById(R.id.re_pw);
 
+        timer0 = (CheckBox)findViewById(R.id.set_time_0);
+        timer0.setOnClickListener(new CheckBox.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                timer = 0;
+                timer0.setChecked(true);
+                timer1.setChecked(false);
+                timer2.setChecked(false);
+                timer3.setChecked(false);
+            }
+        });
+
         timer1 = (CheckBox)findViewById(R.id.set_time_1);
         timer1.setOnClickListener(new CheckBox.OnClickListener() {
             @Override
             public void onClick(View v){
                 timer = 2000;
+                timer0.setChecked(false);
                 timer1.setChecked(true);
                 timer2.setChecked(false);
                 timer3.setChecked(false);
@@ -147,6 +195,7 @@ public class SettingsActivity extends Activity{
             @Override
             public void onClick(View v){
                 timer = 3000;
+                timer0.setChecked(false);
                 timer1.setChecked(false);
                 timer2.setChecked(true);
                 timer3.setChecked(false);
@@ -157,6 +206,7 @@ public class SettingsActivity extends Activity{
             @Override
             public void onClick(View v){
                 timer = 4000;
+                timer0.setChecked(false);
                 timer1.setChecked(false);
                 timer2.setChecked(false);
                 timer3.setChecked(true);
@@ -170,7 +220,7 @@ public class SettingsActivity extends Activity{
                 // 기존 버튼 이미지 사용
                 btn_img1.setChecked(true);
                 btn_img2.setChecked(false);
-                btn_img3.setChecked(false);
+
             }
         });
         btn_img2 = (CheckBox)findViewById(R.id.check_nullpad_image);
@@ -180,18 +230,8 @@ public class SettingsActivity extends Activity{
                 // 앨범에서 이미지 선택
                 btn_img1.setChecked(false);
                 btn_img2.setChecked(true);
-                btn_img3.setChecked(false);
+
                 makeDialog();
-            }
-        });
-        btn_img3 = (CheckBox)findViewById(R.id.check_nullpad_reward);
-        btn_img3.setOnClickListener(new CheckBox.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                // 리워드 이미지 사용
-                btn_img1.setChecked(false);
-                btn_img2.setChecked(false);
-                btn_img3.setChecked(true);
             }
         });
         confirm = (Button)findViewById(R.id.confirm);
@@ -213,6 +253,13 @@ public class SettingsActivity extends Activity{
         input.setHint("**");
         recheck.setHint("**");
         timer = 2000;
+
+        /*
+        SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
+        customBtnImg = sf.getBoolean("customBtnImg", false);
+        if(customBtnImg)
+            setImage();
+            */
     }
 
     @Override
@@ -235,11 +282,13 @@ public class SettingsActivity extends Activity{
 
             SharedPreferences sharedPreferences = getSharedPreferences("sFile", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isLock", powerOn);
             editor.putInt("pwSize", pwSize);
             editor.putInt("pwList", pwList);
             editor.putInt("pwTimer", timer);
             editor.putString("pwImgPath", tempFilePath);
-
+            editor.putBoolean("customBtnImg", customBtnImg);
+            Log.d("PATH","Confirm path : " + tempFilePath.toString());
             //editor.putString("userPhoto", img_str);
 
             editor.commit();
@@ -328,41 +377,39 @@ public class SettingsActivity extends Activity{
         }
         switch (requestCode) {
             case PICK_FROM_ALBUM: {
-                if(data.getData()!=null){
-                    try{
-                        File albumFile = null;
-                        albumFile = createImageFile();
-                        photoURI = data.getData();
-                        albumURI = Uri.fromFile(albumFile);
-                        galleryAddPic();
-                        img1.setImageURI(photoURI);
+                if (data.getData() != null) {
+                    Uri photoUri = data.getData();
 
-                        userImg = (ImageView)findViewById(R.id.testImg);
-                        Drawable d = userImg.getDrawable();
+                    Cursor cursor = null;
 
-                        thePic = ((BitmapDrawable)d).getBitmap();
-                        FileOutputStream out = null;
-                        try{
-                            out=new FileOutputStream(Environment.getExternalStorageDirectory().getPath()+"/sampleImg.png");
-                            thePic.compress(Bitmap.CompressFormat.PNG, 50, out);
-                        }
-                        catch(FileNotFoundException e){
-                            e.printStackTrace();
-                        }
+                    try {
 
                         /*
-                        thePic = ((BitmapDrawable)d).getBitmap();
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        thePic.compress(Bitmap.CompressFormat.PNG, 90, stream);
-                        byte[] imageC = stream.toByteArray();
-                        img_str = Base64.encodeToString(imageC,0);
-                        */
-                        //cropImage();
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        Log.v("알림","앨범에서 가져오기 에러");
+                         *  Uri 스키마를
+                         *  content:/// 에서 file:/// 로  변경한다.
+                         */
+                        String[] proj = {MediaStore.Images.Media.DATA};
+
+                        assert photoUri != null;
+                        cursor = getContentResolver().query(photoUri, proj, null, null, null);
+
+                        assert cursor != null;
+                        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+                        cursor.moveToFirst();
+
+                        tempFile = new File(cursor.getString(column_index));
+
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close();
+                        }
                     }
+
+                    setImage();
+
                 }
+
                 break;
             }
             case Crop.REQUEST_CROP: {
@@ -370,6 +417,27 @@ public class SettingsActivity extends Activity{
                 Toast.makeText(this, "크롭 리퀘스트", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void setImage() {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 4;
+        Bitmap originalBm = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
+
+        //originalBm = setRoundCorner(originalBm, 1200);
+        //img1.setImageBitmap(originalBm);
+        RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(originalBm);
+        img1.setBackground(tempRoundD);
+        /*
+        Glide.with(getApplicationContext())
+                .load(photoURI)
+                .into(img1);
+        */
+        tempFilePath = tempFile.getAbsolutePath();
+        Log.d("PATH","경로 : " + tempFilePath.toString());
+
+        customBtnImg = true;
     }
 
     private void cropImage(Uri photoUri) {
@@ -413,6 +481,28 @@ public class SettingsActivity extends Activity{
         mediaScanIntent.setData(contentUri);
         sendBroadcast(mediaScanIntent);
         Toast.makeText(this,"사진이 저장되었습니다",Toast.LENGTH_SHORT).show();
+    }
+
+
+    public static Bitmap setRoundCorner(Bitmap bitmap, int pixel) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        int color = 0xff424242;
+        Paint paint = new Paint();
+        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        RectF rectF = new RectF(rect);
+
+        paint.setAntiAlias(true);
+        paint.setColor(color);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawRoundRect(rectF, pixel, pixel, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 
 }
