@@ -117,13 +117,22 @@ public class SettingsActivity extends Activity{
 
         powerOn = true;
 
+        tempFilePath = "";
+
         useLock = (CheckBox)findViewById(R.id.check_use);
         useLock.setOnClickListener(new CheckBox.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO : process the click event.
-                dontUse.setChecked(false);
-                powerOn = true;
+                Log.d("power","power1 : " + powerOn);
+                if(useLock.isChecked()) {
+                    useLock.setChecked(true);
+                    dontUse.setChecked(false);
+                    powerOn = true;
+                }else{
+                    dontUse.setChecked(true);
+                    powerOn = false;
+                }
             }
         }) ;
         dontUse = (CheckBox)findViewById(R.id.check_dont);
@@ -131,8 +140,15 @@ public class SettingsActivity extends Activity{
             @Override
             public void onClick(View v) {
                 // TODO : process the click event.
-                useLock.setChecked(false);
-                powerOn = false;
+                Log.d("power","power2 : " + powerOn);
+                if(dontUse.isChecked()) {
+                    useLock.setChecked(false);
+                    dontUse.setChecked(true);
+                    powerOn = false;
+                }else{
+                    useLock.setChecked(true);
+                    powerOn = true;
+                }
             }
         }) ;
 
@@ -297,10 +313,12 @@ public class SettingsActivity extends Activity{
             new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run(){
-                    Intent intent = new Intent(
-                            getApplicationContext(),//현재제어권자
-                            LockScreenService.class); // 이동할 컴포넌트
-                    startService(intent);
+                    if(powerOn) {
+                        Intent intent = new Intent(
+                                getApplicationContext(),//현재제어권자
+                                LockScreenService.class); // 이동할 컴포넌트
+                        startService(intent);
+                    }
                     finishAffinity();
                 }
             }, 500);    //0.5초 뒤에
@@ -379,56 +397,93 @@ public class SettingsActivity extends Activity{
             case PICK_FROM_ALBUM: {
                 if (data.getData() != null) {
                     Uri photoUri = data.getData();
-
+                    /*
                     Cursor cursor = null;
-
                     try {
-
-                        /*
-                         *  Uri 스키마를
-                         *  content:/// 에서 file:/// 로  변경한다.
-                         */
                         String[] proj = {MediaStore.Images.Media.DATA};
-
                         assert photoUri != null;
                         cursor = getContentResolver().query(photoUri, proj, null, null, null);
-
                         assert cursor != null;
                         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-
                         cursor.moveToFirst();
-
                         tempFile = new File(cursor.getString(column_index));
-
                     } finally {
                         if (cursor != null) {
                             cursor.close();
                         }
                     }
-
                     setImage();
+                    */
 
+                    if(photoUri!=null){
+                        cropImageFromAlbum(photoUri);
+                    }
                 }
-
                 break;
             }
             case Crop.REQUEST_CROP: {
                 //setImage();
                 Toast.makeText(this, "크롭 리퀘스트", Toast.LENGTH_SHORT).show();
             }
+            case CROP_FROM_ALBUM:{
+                setImage();
+            }
         }
+    }
+
+    private void cropImageFromAlbum(Uri inputUri){
+        try {
+            tempFile = createImageFile();
+        } catch (IOException e) {
+            Toast.makeText(this, "이미지 처리 오류! 다시 시도해주세요.", Toast.LENGTH_SHORT).show();
+            finish();
+            e.printStackTrace();
+        }
+        Uri outputUri = Uri.fromFile(tempFile);
+
+        Intent intent = getCropIntent(inputUri, outputUri);
+        tempFilePath = tempFile.getAbsolutePath();
+        Log.d("PATH","경로 : " + tempFilePath.toString());
+        customBtnImg = true;
+        startActivityForResult(intent, CROP_FROM_ALBUM);
+        //setImage();
+    }
+
+    private Intent getCropIntent(Uri inputUri, Uri outputUri){
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(inputUri, "image/*");
+        intent.putExtra("aspectX", "1");
+        intent.putExtra("aspectY", "1");
+        intent.putExtra("outputX", "200");
+        intent.putExtra("outputY", "200");
+        intent.putExtra("scale", "true");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+
+        return intent;
     }
 
     private void setImage() {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 4;
+        options.inSampleSize = 1;
         Bitmap originalBm = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
+
+        int height = originalBm.getHeight();
+        int width = originalBm.getWidth();
+
+        Bitmap resized = null;
+        while (height > 200) {
+            resized = Bitmap.createScaledBitmap(originalBm, (width * 200) / height, 200, true);
+            height = resized.getHeight();
+            width = resized.getWidth();
+        }
 
         //originalBm = setRoundCorner(originalBm, 1200);
         //img1.setImageBitmap(originalBm);
-        RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(originalBm);
+        RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(resized);
         img1.setBackground(tempRoundD);
+
         /*
         Glide.with(getApplicationContext())
                 .load(photoURI)

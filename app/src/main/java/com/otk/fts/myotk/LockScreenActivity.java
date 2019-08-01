@@ -172,7 +172,17 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
             //originalBm = setRoundCorner(originalBm, 3);
 
-            RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(originalBm);
+            int height = originalBm.getHeight();
+            int width = originalBm.getWidth();
+
+            Bitmap resized = null;
+            while (height > 200) {
+                resized = Bitmap.createScaledBitmap(originalBm, (width * 200) / height, 200, true);
+                height = resized.getHeight();
+                width = resized.getWidth();
+            }
+
+            RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(resized);
 
             custom_btn_drawable = tempRoundD;
         }
@@ -235,12 +245,15 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
     @Override
     public void onStart(){
+
+        Log.d("LockScreenActive", "LockScreenActive"+ isActive);
+
         if(isActive){
             super.onStart();
             shuffleKeyPad(pos);
             btnShow();
 
-            //Log.d("Activity", "LockScreenActivity On!");
+            Log.d("Activity", "LockScreenActivity On!");
             //Log.d("Activity", ""+pwSize);
             Log.d("Activity", "" + f_timer);
             isStart = false;
