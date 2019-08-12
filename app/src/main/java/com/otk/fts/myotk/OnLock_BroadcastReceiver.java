@@ -20,7 +20,7 @@ public class OnLock_BroadcastReceiver extends BroadcastReceiver {
         {
 
             //Toast.makeText(context, "SCREEN_ON", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(context, LockScreenActivity.class);
+            Intent i = new Intent(context, preLockScreenActivity.class);
 
             i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, 0);
@@ -38,7 +38,7 @@ public class OnLock_BroadcastReceiver extends BroadcastReceiver {
             }
 
             if(isPhoneIdle){
-                Intent i = new Intent(context, LockScreenActivity.class);
+                Intent i = new Intent(context, preLockScreenActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
             }

@@ -31,6 +31,20 @@
 
         </activity>
         <activity
+            android:name=".preLockScreenActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".beforeSettingActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
             android:name=".LockScreenActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"

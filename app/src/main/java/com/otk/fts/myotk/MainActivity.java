@@ -1,36 +1,16 @@
 package com.otk.fts.myotk;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.StrictMode;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Random;
-
-import static android.app.Service.START_STICKY;
 
 public class MainActivity extends Activity{
 
@@ -74,7 +54,7 @@ public class MainActivity extends Activity{
             Log.d("Activity", "Not First Boot!");
             Intent intent = new Intent(
                     getApplicationContext(),//현재제어권자
-                    SettingsActivity.class); // 이동할 컴포넌트
+                    beforeSettingActivity.class); // 이동할 컴포넌트
             startActivity(intent);
         }
     }

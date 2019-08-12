@@ -1,13 +1,9 @@
 package com.otk.fts.myotk;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,16 +12,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.os.Vibrator;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -40,10 +30,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class LockScreenActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
+public class LockScreenActivity extends Activity implements View.OnTouchListener {
 
     private boolean isActive;
-
     private Context mContext;
     private Button mBtnButton1;
     private Button mBtnButton2;
@@ -58,9 +47,6 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     private Button mBtnButton11;
     private Button mBtnButton12;
     private Button mBtnShow;
-    private String entityContents = null;
-
-    private Button mBtnReset;
     private Button mBtnDel;
 
     private Button txtInput0;
@@ -91,6 +77,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     boolean isStart = false;
 
     Vibrator vibrator;
+    private Integer wrongCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,29 +102,29 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
         mContext = getApplicationContext();
         mBtnButton1 = (Button) findViewById(R.id.button1);
-        mBtnButton1.setOnClickListener(this);
+        mBtnButton1.setOnTouchListener(this);
         mBtnButton2 = (Button) findViewById(R.id.button2);
-        mBtnButton2.setOnClickListener(this);
+        mBtnButton2.setOnTouchListener(this);
         mBtnButton3 = (Button) findViewById(R.id.button3);
-        mBtnButton3.setOnClickListener(this);
+        mBtnButton3.setOnTouchListener(this);
         mBtnButton4 = (Button) findViewById(R.id.button4);
-        mBtnButton4.setOnClickListener(this);
+        mBtnButton4.setOnTouchListener(this);
         mBtnButton5 = (Button) findViewById(R.id.button5);
-        mBtnButton5.setOnClickListener(this);
+        mBtnButton5.setOnTouchListener(this);
         mBtnButton6 = (Button) findViewById(R.id.button6);
-        mBtnButton6.setOnClickListener(this);
+        mBtnButton6.setOnTouchListener(this);
         mBtnButton7 = (Button) findViewById(R.id.button7);
-        mBtnButton7.setOnClickListener(this);
+        mBtnButton7.setOnTouchListener(this);
         mBtnButton8 = (Button) findViewById(R.id.button8);
-        mBtnButton8.setOnClickListener(this);
+        mBtnButton8.setOnTouchListener(this);
         mBtnButton9 = (Button) findViewById(R.id.button9);
-        mBtnButton9.setOnClickListener(this);
+        mBtnButton9.setOnTouchListener(this);
         mBtnButton10 = (Button) findViewById(R.id.button10);
-        mBtnButton10.setOnClickListener(this);
+        mBtnButton10.setOnTouchListener(this);
         mBtnButton11 = (Button) findViewById(R.id.button11);
-        mBtnButton11.setOnClickListener(this);
+        mBtnButton11.setOnTouchListener(this);
         mBtnButton12 = (Button) findViewById(R.id.button12);
-        mBtnButton12.setOnClickListener(this);
+        mBtnButton12.setOnTouchListener(this);
         mBtnShow = (Button) findViewById(R.id.btn_show);
         mBtnShow.setOnTouchListener(this);
 
@@ -146,10 +133,10 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         txtInput2 = (Button)findViewById(R.id.input2);
         txtInput3 = (Button)findViewById(R.id.input3);
 
-        mBtnReset = (Button) findViewById((R.id.btn_reset));
-        mBtnReset.setOnClickListener(this);
+        //mBtnReset = (Button) findViewById((R.id.btn_reset));
+        //mBtnReset.setOnClickListener(this);
         mBtnDel = (Button) findViewById((R.id.btn_del));
-        mBtnDel.setOnClickListener(this);
+        mBtnDel.setOnTouchListener(this);
 
         //저장된 값을 불러오기 위해 같은 네임파일을 찾음.
         SharedPreferences sf = getSharedPreferences("sFile",MODE_PRIVATE);
@@ -240,7 +227,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         pos.add(10);
         pos.add(11);
 
-
+        wrongCount = 0;
     }
 
     @Override
@@ -248,24 +235,36 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
 
         Log.d("LockScreenActive", "LockScreenActive"+ isActive);
 
-        if(isActive){
+
+
+        if(isActive) {
             super.onStart();
+
+            wrongCount = 0;
+
             shuffleKeyPad(pos);
             btnShow();
-
-            Log.d("Activity", "LockScreenActivity On!");
-            //Log.d("Activity", ""+pwSize);
-            Log.d("Activity", "" + f_timer);
+            btnsDisable();
             isStart = false;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     btnUnshow();
+                    btnsEnable();
                 }
             }, f_timer);    //2초 뒤에
+
         }else {
             finishAffinity();
         }
+
+    }
+
+    void btnsDisable(){
+
+    }
+
+    void btnsEnable(){
 
     }
 
@@ -297,15 +296,12 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
         }
         return super.onKeyDown(keyCode, event);
     }
-
+    /*
     @Override
     public void onClick(View v) {
         //Log.d("FinTech", "reset_btn clicked");
         switch (v.getId()) {
-            case R.id.btn_reset:
-                //shuffleKeyPad(pos);
-                //Toast.makeText(getApplicationContext(), "키패드 리셋", Toast.LENGTH_SHORT).show();
-                break;
+
             case R.id.btn_del:
                 if(input.size()!=0) {
                     input.remove(input.size() - 1);
@@ -375,7 +371,7 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
                 break;
         }
     }
-
+    */
     void CheckPW() {
         if(input.size()==pw.size()){
             int index = 0;
@@ -383,19 +379,63 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
             while(index<input.size()){
                 if(input.get(index)!=pw.get(index)) {
                     vibrator.vibrate(100);
-                    Toast toast = Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT);
-                    //Log.d("Activity", "index : "+index + " / input:" + input.get(index)+" / pw:" + pw.get(index));
-                    toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
-                    //Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT).show();
-                    toast.show();
-                    new Handler().postDelayed(new Runnable(){
-                        @Override
-                        public void run(){
-                            Incorrect();
-                            input.clear();
-                            enterInput();
-                        }
-                    }, 200);    //0.2초 뒤에
+                    wrongCount += 1;
+                    if(wrongCount>50){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 50회 이상 오류!\n 백업핀으로 패스워드가 초기화되었습니다.", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>45){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 45회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>40){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 40회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>35){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 35회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>30){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 30회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>25){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 25회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>20){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 20회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>15){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 15회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>10){
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 10회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    }else if(wrongCount>5){
+                        // PhoneLockForSeconds();
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호 5회 이상 오류!", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
+                        toast.show();
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT);
+                        //Log.d("Activity", "index : "+index + " / input:" + input.get(index)+" / pw:" + pw.get(index));
+                        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                        //Toast.makeText(getApplicationContext(), "비밀번호가 다릅니다!", Toast.LENGTH_SHORT).show();
+                        toast.show();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Incorrect();
+                                input.clear();
+                                enterInput();
+                            }
+                        }, 200);    //0.2초 뒤에
+                    }
                     return;
                 }
                 index++;
@@ -489,34 +529,35 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     public Drawable getDrawableImage(int number) {
         //Log.d("FinTech", "getDrawableImage number : " + number);
         if (number==0) {
-            return getResources().getDrawable(R.drawable.blue_0);
+            return getResources().getDrawable(R.drawable.gray_0);
         } else if (number==1) {
-            return getResources().getDrawable(R.drawable.blue_1);
+            return getResources().getDrawable(R.drawable.gray_1);
         } else if (number==2) {
-            return getResources().getDrawable(R.drawable.blue_2);
+            return getResources().getDrawable(R.drawable.gray_2);
         } else if (number==3) {
-            return getResources().getDrawable(R.drawable.blue_3);
+            return getResources().getDrawable(R.drawable.gray_3);
         } else if (number==4) {
-            return getResources().getDrawable(R.drawable.blue_4);
+            return getResources().getDrawable(R.drawable.gray_4);
         } else if (number==5) {
-            return getResources().getDrawable(R.drawable.blue_5);
+            return getResources().getDrawable(R.drawable.gray_5);
         } else if (number==6) {
-            return getResources().getDrawable(R.drawable.blue_6);
+            return getResources().getDrawable(R.drawable.gray_6);
         } else if (number==7) {
-            return getResources().getDrawable(R.drawable.blue_7);
+            return getResources().getDrawable(R.drawable.gray_7);
         } else if (number==8) {
-            return getResources().getDrawable(R.drawable.blue_8);
+            return getResources().getDrawable(R.drawable.gray_8);
         } else if (number==9) {
-            return getResources().getDrawable(R.drawable.blue_9);
+            return getResources().getDrawable(R.drawable.gray_9);
         } else if (number==10) {
-            return getResources().getDrawable(R.drawable.blue_shap);
+            return getResources().getDrawable(R.drawable.gray_shap);
         } else if (number==11) {
-            return getResources().getDrawable(R.drawable.blue_star);
+            return getResources().getDrawable(R.drawable.gray_star);
         } else if (number==12) {
 
             if(customBtnImg){
                 return (Drawable)custom_btn_drawable;
             }else {
+                // 기본적으로 제공하는 널버튼 이미지
                 return getResources().getDrawable(R.drawable.btn_new_btn);
             }
         }
@@ -543,19 +584,90 @@ public class LockScreenActivity extends Activity implements View.OnClickListener
     public boolean onTouch(View v, MotionEvent motionEvent) {
         switch(motionEvent.getAction()){
             case MotionEvent.ACTION_DOWN :
-                shuffleKeyPad(pos);
-                /*
-                if(!isStart){
-                    shuffleKeyPad(pos);
-                    isStart = true;
+                //v.setPadding(10,10,10,10);
+                v.setAlpha(0.55f);
+                switch (v.getId()) {
+
+                    case R.id.btn_del:
+                        if(input.size()!=0) {
+                            input.remove(input.size() - 1);
+                            enterInput();
+                        }
+                        break;
+                    case R.id.button1:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(0));
+                        enterInput();
+                        //Log.d("Input", "input num : " + pos.get(0));
+                        break;
+                    case R.id.button2:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(1));
+                        enterInput();
+                        break;
+                    case R.id.button3:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(2));
+                        enterInput();
+                        break;
+                    case R.id.button4:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(3));
+                        enterInput();
+                        break;
+                    case R.id.button5:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(4));
+                        enterInput();
+                        break;
+                    case R.id.button6:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(5));
+                        enterInput();
+                        break;
+                    case R.id.button7:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(6));
+                        enterInput();
+                        break;
+                    case R.id.button8:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(7));
+                        enterInput();
+                        break;
+                    case R.id.button9:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(8));
+                        enterInput();
+                        break;
+                    case R.id.button10:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(9));
+                        enterInput();
+                        break;
+                    case R.id.button11:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(10));
+                        enterInput();
+                        break;
+                    case R.id.button12:
+                        if(input.size()<pw.size())
+                            input.add(pos.get(11));
+                        enterInput();
+                        break;
+                    case R.id.btn_show:
+                        shuffleKeyPad(pos);
+                        btnShow();
+                        break;
                 }
-                */
-                btnShow();
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                btnUnshow();
+                //v.setPadding(0,0,0,0);
+                v.setAlpha(1.0f);
+                if(v.getId()==R.id.btn_show)
+                    btnUnshow();
                 break;
         }
         return true;
