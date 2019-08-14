@@ -1,5 +1,6 @@
 package com.otk.fts.myotk;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,10 +13,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -25,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,6 +39,9 @@ import java.util.Random;
 public class LockScreenActivity extends Activity implements View.OnTouchListener {
 
     private boolean isActive;
+
+    private LockScreenUtils mLockscreenUtils;
+
     private Context mContext;
     private Button mBtnButton1;
     private Button mBtnButton2;
@@ -54,10 +63,14 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
     private Button txtInput2;
     private Button txtInput3;
 
+    private Integer btnType;
+
+    private LinearLayout bg_screen;
+
     // Custom 버튼 이미지 여부
-    private boolean customBtnImg;
+    private boolean customBgImg;
     // Custom 버튼 이미지 경로
-    private String customBtnImgPath;
+    private String customBgImgPath;
     // Custom 버튼 Drawable
     private Drawable custom_btn_drawable;
 
@@ -88,6 +101,7 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
         // 진동
         vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
+
         getWindow().addFlags(
                 // 기본 잠금화면보다 우선출력
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -99,6 +113,10 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
                 getApplicationContext(),//현재제어권자
                 LockScreenService.class); // 이동할 컴포넌트
         startService(intent);
+
+        bg_screen = (LinearLayout)findViewById(R.id.Linear_bg);
+        mLockscreenUtils = new LockScreenUtils();
+
 
         mContext = getApplicationContext();
         mBtnButton1 = (Button) findViewById(R.id.button1);
@@ -150,12 +168,24 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
 
         f_timer = sf.getInt("pwTimer", 2000);
 
-        customBtnImg = sf.getBoolean("customBtnImg", false);
-        customBtnImgPath = sf.getString("pwImgPath","");
+        btnType = sf.getInt("btnType", 0);
 
-        if(customBtnImg){
+        customBgImg = sf.getBoolean("customBgImg", false);
+        customBgImgPath = sf.getString("pwImgPath","");
+
+        if(customBgImg){
+
             BitmapFactory.Options options = new BitmapFactory.Options();
-            Bitmap originalBm = BitmapFactory.decodeFile(customBtnImgPath, options);
+            Bitmap originalBm = BitmapFactory.decodeFile(customBgImgPath, options);
+
+            Drawable drawable = new BitmapDrawable(originalBm);
+            //drawable.setAlpha(30);
+            bg_screen.setBackground(drawable);
+
+
+            /*
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            Bitmap originalBm = BitmapFactory.decodeFile(customBgImgPath, options);
 
             //originalBm = setRoundCorner(originalBm, 3);
 
@@ -172,7 +202,14 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
             RoundedAvatarDrawable tempRoundD= new RoundedAvatarDrawable(resized);
 
             custom_btn_drawable = tempRoundD;
+            */
+        }else {
+            //Drawable originbg = getResources().getDrawable(R.drawable.sample_bg);
+            //originbg.setAlpha(30);
+            //bg_screen.setBackgroundResource(R.drawable.sample_bg);
+            bg_screen.setBackgroundColor(getResources().getColor(android.R.color.black));
         }
+
 
         // 비밀번호 배열 ( 임시비번 = 12 )
         pw = new ArrayList();
@@ -228,17 +265,17 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
         pos.add(11);
 
         wrongCount = 0;
+
+        lockHomeButton();
     }
 
     @Override
-    public void onStart(){
+    public void onResume(){
 
-        Log.d("LockScreenActive", "LockScreenActive"+ isActive);
-
-
+        Log.d("LockScreenActive", "LockScreen Activate : "+ isActive);
 
         if(isActive) {
-            super.onStart();
+            super.onResume();
 
             wrongCount = 0;
 
@@ -257,8 +294,9 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
         }else {
             finishAffinity();
         }
-
     }
+
+
 
     void btnsDisable(){
 
@@ -273,6 +311,14 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    protected void onStop(){
+        // 일단 현재는 종료될 때 세팅 되는걸로 설정
+        // 설정 완료 버튼으로 고쳐야됨;;
+        super.onStop();
+        //finishAffinity();
     }
 
     @Override
@@ -451,6 +497,7 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
     }
 
     void Unlock(){
+        unlockHomeButton();
         Toast toast = Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL, 0,0);
         //Toast.makeText(getApplicationContext(), "잠금 해제", Toast.LENGTH_SHORT).show();
@@ -528,6 +575,7 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
 
     public Drawable getDrawableImage(int number) {
         //Log.d("FinTech", "getDrawableImage number : " + number);
+
         if (number==0) {
             return getResources().getDrawable(R.drawable.gray_0);
         } else if (number==1) {
@@ -554,12 +602,22 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
             return getResources().getDrawable(R.drawable.gray_star);
         } else if (number==12) {
 
+            if(btnType==0){
+                return getResources().getDrawable(R.drawable.btn_new_btn);
+            }else if(btnType==1){
+                return getResources().getDrawable(R.drawable.btn_new_btn2);
+            }
+
+            /*
+
             if(customBtnImg){
                 return (Drawable)custom_btn_drawable;
             }else {
                 // 기본적으로 제공하는 널버튼 이미지
                 return getResources().getDrawable(R.drawable.btn_new_btn);
             }
+
+            */
         }
         return null;
     }
@@ -747,5 +805,18 @@ public class LockScreenActivity extends Activity implements View.OnTouchListener
 
         return output;
     }
+
+    // Lock home button
+    public void lockHomeButton() {
+        mLockscreenUtils.lock(LockScreenActivity.this);
+        Log.d("LockScreen_Home", "lockHomeButton() ");
+    }
+
+    // Unlock home button and wait for its callback
+    public void unlockHomeButton() {
+        mLockscreenUtils.unlock();
+        Log.d("LockScreen_Home", "unlockHomeButton() ");
+    }
+
 
 }
