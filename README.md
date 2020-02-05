@@ -1,6 +1,5 @@
 # Brain Lock : OTK ScreenLocker
 
---------
 
 ### What is Brain Lock?
 
@@ -40,7 +39,6 @@ Various elements of the lock screen can be changed/set at the Settings(Activity)
 
 ## Improvement
 
---------
 
 You can find the "Upgraded version of Brain Lock" at the google playstore :
 
@@ -50,6 +48,5 @@ https://play.google.com/apps/testing/com.otk.fts.myotk
 
 ## License
 
--------
 
 The Patent of OTK belongs to Techworks Plus Co., Ltd
